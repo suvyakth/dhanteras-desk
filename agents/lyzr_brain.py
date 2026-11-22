@@ -413,7 +413,12 @@ def run_lyzr_band_agent(config_name: str, name: str) -> None:
     async def main() -> None:
         adapter = ADAPTERS.get(name, LyzrAdapter)(name)
         os.chdir(ROOT)
-        agent_id, api_key = load_agent_config(config_name)
+        prefix = config_name.upper()
+        if os.environ.get(f"{prefix}_AGENT_ID") and os.environ.get(f"{prefix}_API_KEY"):
+            # Cloud (Agent37): credentials come from the instance's environment variables.
+            agent_id, api_key = os.environ[f"{prefix}_AGENT_ID"], os.environ[f"{prefix}_API_KEY"]
+        else:
+            agent_id, api_key = load_agent_config(config_name)
         agent = Agent.create(adapter=adapter, agent_id=agent_id, api_key=api_key)
         log.info("%s is live on Band, thinking with Lyzr agent %s", name, adapter.lyzr_id)
         await agent.run()
