@@ -191,6 +191,10 @@ class LyzrAdapter(SimpleAdapter):
     def postprocess(self, body: str, evidence: dict) -> str:
         return body
 
+    async def refine(self, answer: str, session: str, tools) -> str:
+        """Hook to let code send a draft back to the LLM before anything is posted. Default: keep it."""
+        return answer
+
     def route(self, mentions, msg):
         """Hook for code-enforced routing rules. Default: keep what the LLM chose."""
         return mentions
@@ -212,7 +216,9 @@ class LyzrAdapter(SimpleAdapter):
         await tools.send_event(f"{self.name} is thinking with its Lyzr agent", "thought")
         try:
             prompt, evidence = await self.build_prompt(prompt, tools)
-            answer = await ask_lyzr(self.lyzr_id, prompt, session_id=f"{room_id}:{self.name}:{RUN_TAG}")
+            session = f"{room_id}:{self.name}:{RUN_TAG}"
+            answer = await ask_lyzr(self.lyzr_id, prompt, session_id=session)
+            answer = await self.refine(answer, session, tools)
         except Exception as e:  # report in the room instead of failing silently
             log.exception("Lyzr call failed")
             await tools.send_event(f"Lyzr call failed: {e}", "error")
@@ -367,6 +373,26 @@ class PlannerAdapter(LyzrAdapter):
         elif self._approved:
             status += " NEXT: send the owner the final plan and ask for approve or reject."
         return f"{prompt}\n\n{baseline_table()}\n\n{status}", {}
+
+    async def refine(self, answer, session, tools):
+        """A draft that fails the code check goes back to Planner once, privately, before Critic sees it,
+        so Critic's veto is spent on evidence, not on arithmetic the code already caught."""
+        _, body = parse_reply(answer)
+        if (self._approved and self._sender == "critic") or not _PLAN_LINE.search(body):
+            return answer  # the owner gets the approved plan verbatim; nothing to fix
+        problems, total = check_plan(body)
+        if not problems:
+            return answer
+        await tools.send_event("Code check failed (" + "; ".join(problems) + "). Planner is fixing the draft.",
+                               "thought")
+        retry = (f"Your draft fails the code check: total {total}; " + "; ".join(problems) +
+                 f".\n{baseline_table()}\nFix exactly these problems and send the corrected plan in the same "
+                 "format, with the same TO: line. Keep each change justified by an E-number or 'budget cut'.")
+        try:
+            return await ask_lyzr(self.lyzr_id, retry, session_id=session)
+        except Exception:
+            log.exception("Planner refine call failed; posting the original draft")
+            return answer
 
     def postprocess(self, body, evidence):
         """Stamp every plan with the code-computed total, so nobody has to trust the LLM's maths.
