@@ -51,7 +51,7 @@ In app.band.ai, create a room, add Planner, Critic and Scout, and send `@Planner
 |---|---|---|---|
 | BAND | Agent identities, rooms, @mention routing, mention-scoped visibility, thought and error events, message delivery states | `agents/lyzr_brain.py`, `agents/run_lyzr.py` | All coordination and the human decision step |
 | Lyzr | Three Lyzr Studio agents (created and updated through the API), with per-room memory sessions through the inference API | `agents/create_lyzr_agents.py`, `ask_lyzr` | Every agent's reasoning |
-| Agent37 | Hosting *(planned)* | — | — |
+| Agent37 | Deploy script ready (`agents/deploy_agent37.py`: sandbox, env-var secrets, exec install, boot hook). Not switched on, because the starter credit needs a card | `agents/deploy_agent37.py` | Without it the crew runs only while a laptop is on |
 | Finch | One agent skill *(planned)* | — | — |
 
 What went wrong while building it, and how each problem was fixed, is in [PROBLEMS_LOG.md](PROBLEMS_LOG.md).
