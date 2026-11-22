@@ -1,0 +1,13 @@
+# Copy to agent_config.yaml (gitignored) and paste the ID + API key that
+# app.band.ai/agents shows once when you click "Connect remote agent".
+planner:
+  agent_id: "uuid-for-planner"
+  api_key: "band-api-key-for-planner"
+
+critic:
+  agent_id: "uuid-for-critic"
+  api_key: "band-api-key-for-critic"
+
+scout:
+  agent_id: "uuid-for-scout"
+  api_key: "band-api-key-for-scout"

@@ -1,0 +1,14 @@
+{
+  "_note": "Made-up demo shop. No real business.",
+  "shop": "Lakshmi Diya & Mithai Corner",
+  "city": "Pune",
+  "owner_handle": "ozardravindra",
+  "budget_inr": 60000,
+  "items": [
+    {"sku": "DIYA-CLAY-12", "name": "Clay diyas, pack of 12", "stock": 140, "cost_inr": 60,  "price_inr": 120, "weekly_sales": 45},
+    {"sku": "KAJU-KATLI-500", "name": "Kaju katli 500 g",   "stock": 30,  "cost_inr": 420, "price_inr": 560, "weekly_sales": 38},
+    {"sku": "DRYFRUIT-BOX",  "name": "Dry-fruit gift box",  "stock": 22,  "cost_inr": 650, "price_inr": 999, "weekly_sales": 20},
+    {"sku": "RANGOLI-SET",   "name": "Rangoli colour set",  "stock": 75,  "cost_inr": 90,  "price_inr": 180, "weekly_sales": 25},
+    {"sku": "TORAN-MARIGOLD","name": "Marigold toran",      "stock": 18,  "cost_inr": 110, "price_inr": 250, "weekly_sales": 30}
+  ]
+}

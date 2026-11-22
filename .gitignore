@@ -1,0 +1,9 @@
+# live keys: never commit
+.env
+agent_config.yaml
+
+.venv/
+__pycache__/
+*.pyc
+*.log
+research/
