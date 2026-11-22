@@ -55,7 +55,7 @@ def exec_(instance_id: str, command: str, timeout: int = 600) -> dict:
 def create() -> str:
     if STATE.exists():
         return STATE.read_text().strip()
-    body = {"template": "agent37-base", "name": NAME, "resources": {"cpu": 1, "memory": 1, "disk": 4},
+    body = {"template": "agent37-base", "name": NAME, "resources": {"cpu": 2, "memory": 4, "disk": 4},
             "auto_sleep": False, "env": env_vars(), "metadata": {"project": NAME}}
     r = httpx.post(API, headers={"Authorization": f"Bearer {KEY}"}, json=body, timeout=300)
     if r.status_code >= 400:
